@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="penIndentify:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/penIndentify_jar</output-path>
+    <root id="root">
+      <element id="archive" name="penIndentify.jar">
+        <element id="module-output" name="penIndentify" />
+        <element id="file-copy" path="$PROJECT_DIR$/../Java_jar/javacsv.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/../Java_jar/jtablet.jar" />
+      </element>
+    </root>
+  </artifact>
+</component>

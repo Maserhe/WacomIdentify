@@ -19,7 +19,9 @@ public class Dialog extends JFrame implements Runnable {
         drawPanel.setBounds(0, 0, getWidth(), getHeight());
         drawPanel.setLayout(null);
         drawPanel.setOpaque(false);
+        this.setResizable(false);
         setVisible(true);
+
     }
 
     @Override

@@ -87,7 +87,7 @@ public class DrawTest extends JPanel {
                 newPoint.setAltitude(PenData.altitude());
                 newPoint.setPressure(PenData.pressure());
                 newPoint.setAzimuth(PenData.azimuth());
-                newPoint.setTangentPressure(PenData.tangentPressure());
+                //newPoint.setTangentPressure(PenData.tangentPressure());
                 tempPoint.add(newPoint);
 
             }
@@ -147,7 +147,7 @@ public class DrawTest extends JPanel {
 
         CsvWriter csvWriter = new CsvWriter(csvName, ',', Charset.forName("UTF-8"));
         // 表头和内容
-        String[]  headers = {"x", "y", "pressure", "azimuth", "altitude", "tangentPressure", "time", "Serial number"};
+        String[]  headers = {"x", "y", "pressure", "azimuth", "altitude", "time", "Serial number"};
 
         // 写表头和内容，因为csv文件中区分没有那么明确，所以都使用同一函数，写成功就行
         try {
@@ -156,7 +156,7 @@ public class DrawTest extends JPanel {
             for (int i = 0; i < pointInfo.size(); i ++ ) {
                 for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
                     //String[] content = {String.valueOf(i.get(j).getX()), String.valueOf(i.get(j).getY()),String.valueOf(i.get(j).getPressure()),String.valueOf(i.get(j).getAzimuth()),String.valueOf(i.get(j).getAltitude()),String.valueOf(i.get(j).getTangentPressure()),i.get(j).getTime(), String.valueOf(i + 1)};
-                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()),String.valueOf(pointInfo.get(i).get(j).getAltitude()),String.valueOf(pointInfo.get(i).get(j).getTangentPressure()),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1)};
+                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()),String.valueOf(pointInfo.get(i).get(j).getAltitude()),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1)};
                     csvWriter.writeRecord(content);
                 }
             }

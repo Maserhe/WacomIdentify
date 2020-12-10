@@ -10,16 +10,16 @@ public class PointInfo {
     private int pressure;
     private int azimuth;
     private int altitude;
-    private int tangentPressure;
+    //private int tangentPressure;
 
-    public PointInfo(int x, int y, String time, int pressure, int azimuth, int altitude, int tangentPressure) {
+    public PointInfo(int x, int y, String time, int pressure, int azimuth, int altitude) {
         this.x = x;
         this.y = y;
         this.time = time;
         this.pressure = pressure;
         this.azimuth = azimuth;
         this.altitude = altitude;
-        this.tangentPressure = tangentPressure;
+        //this.tangentPressure = tangentPressure;
     }
 
     public PointInfo() {
@@ -53,9 +53,6 @@ public class PointInfo {
         this.altitude = altitude;
     }
 
-    public void setTangentPressure(int tangentPressure) {
-        this.tangentPressure = tangentPressure;
-    }
 
     public int getX() {
         return x;
@@ -81,7 +78,4 @@ public class PointInfo {
         return altitude;
     }
 
-    public int getTangentPressure() {
-        return tangentPressure;
-    }
 }

@@ -16,7 +16,7 @@ public class PenData {
     static int pressure = 0;            // pressure value
     static int azimuth = 0;             // orientation azimuth   0度 到 360度之间。方位角
     static int altitude = 90;            // orientation altitude angle   90度 到 0度之间。 方位高度角
-    static int tangentPressure = 0;     // tangent pressure 切向压力
+    //static int tangentPressure = 0;     // tangent pressure 切向压力
 
     static {
         if (jTablet == null) {
@@ -65,6 +65,7 @@ public class PenData {
             azimuth = jTablet.getCursor().getData(JTabletCursor.DATA_ORIENTATION_AZIMUTH);
         return azimuth;
     }
+    /*
     public static int tangentPressure(){
         try
         {
@@ -77,7 +78,7 @@ public class PenData {
             tangentPressure = jTablet.getCursor().getData(JTabletCursor.DATA_TANGENT_PRESSURE);
         return tangentPressure;
     }
-
+    */
     static void refresh(){
         if (jTablet.getCursor() instanceof JTabletCursor) {
             try {
@@ -94,7 +95,7 @@ public class PenData {
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println(PenData.pressure() + " "  + PenData.tangentPressure()+ " " + PenData.altitude() + " " + PenData.azimuth());
+            System.out.println(PenData.pressure() + " " + " " + PenData.altitude() + " " + PenData.azimuth());
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
