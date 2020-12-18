@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -156,7 +157,7 @@ public class DrawTest extends JPanel {
             for (int i = 0; i < pointInfo.size(); i ++ ) {
                 for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
                     //String[] content = {String.valueOf(i.get(j).getX()), String.valueOf(i.get(j).getY()),String.valueOf(i.get(j).getPressure()),String.valueOf(i.get(j).getAzimuth()),String.valueOf(i.get(j).getAltitude()),String.valueOf(i.get(j).getTangentPressure()),i.get(j).getTime(), String.valueOf(i + 1)};
-                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()),String.valueOf(pointInfo.get(i).get(j).getAltitude()),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1)};
+                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),String.valueOf(pointInfo.get(i).get(j).getAltitude()/10),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1)};
                     csvWriter.writeRecord(content);
                 }
             }
@@ -167,12 +168,10 @@ public class DrawTest extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         // 关闭csvWriter
         csvWriter.close();
-
-
     }
+    // 三次样条插值。
+
 
 }

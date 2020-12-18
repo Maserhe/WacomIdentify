@@ -28,6 +28,7 @@ public class Dialog extends JFrame implements Runnable {
     public void run() {
         while (true) {
             drawPanel.paintComponent();
+            PenData.refresh();
             try {
                 Thread.sleep(30);
             } catch (InterruptedException e) {

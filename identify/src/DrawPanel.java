@@ -45,6 +45,7 @@ public class DrawPanel extends JPanel {
         });
 
 */
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -53,6 +54,7 @@ public class DrawPanel extends JPanel {
                 tempPoint = null;
             }
         });
+
 
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
