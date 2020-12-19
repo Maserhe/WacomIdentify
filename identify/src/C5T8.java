@@ -42,7 +42,27 @@ class HuiTu{
                 tempPoint = null;
             }
         });
+        mFrame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
 
+                double[] xx = new double[]{0.52 ,3.1,8.0,17.95,28.65,39.62,50.65,78,104.6,156.6,
+                        208.6,260.7,312.5,364.4,416.3,468,494,507,520};
+                double[] yy = new double[]{5.288,9.4,13.84,20.20,24.90,28.44,31.10,35,
+                        36.9,36.6,34.6,31.0,26.34,20.9,14.8,7.8,3.7,1.5,0.2};
+                double lastx = 0.52;
+                double lasty = 5.288;
+                Graphics g =mFrame.getGraphics();
+                for(double i= 1 ; i < 520 ; i += 1 ){
+                    double t = Spline.Spline(xx,yy,0,0, i) * 10;
+                    g.drawLine((int)lastx,(int)lasty, (int)i,(int)t);
+                    System.out.println(t + "  " + i);
+                    lastx = i;
+                    lasty = t;
+                }
+            }
+        });
         mFrame.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 int x=e.getX();
@@ -50,10 +70,10 @@ class HuiTu{
                 Graphics g =mFrame.getGraphics();
                 //g.drawLine(LastX, LastY, x, y);
                 //g.drawOval(LastX,LastY,5,5);
-                g.fillOval(LastX,LastY,10,10);
+                //g.fillOval(LastX,LastY,10,10);
+
                 LastX=e.getX();
                 LastY=e.getY();
-
 
             }
 
