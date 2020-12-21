@@ -16,6 +16,7 @@ public class StartUI extends JFrame {
     public static void main(String[] args) {
         StartUI startUI = new StartUI();
     }
+
     private JPanel panel0 = new JPanel();
     private JPanel panel1 = new JPanel();
     private JPanel panel2 = new JPanel();

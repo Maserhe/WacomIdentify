@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 import static java.lang.StrictMath.pow;
+import static java.lang.StrictMath.sqrt;
 
 /**
  * @author Maserhe
@@ -8,6 +9,7 @@ import static java.lang.StrictMath.pow;
  */
 
 public class Spline {
+    /*
     public static void main(String[] args) {
 
         double[] x = new double[]{0.52 ,3.1,8.0,17.95,28.65,39.62,50.65,78,104.6,156.6,
@@ -15,15 +17,15 @@ public class Spline {
         double[] y = new double[]{5.288,9.4,13.84,20.20,24.90,28.44,31.10,35,
                 36.9,36.6,34.6,31.0,26.34,20.9,14.8,7.8,3.7,1.5,0.2};
 
-        Spline.Spline(x, y,0,0,1);
+        //Spline.Spline(x, y,0,0,1);
     }
+    */
 
-    public static double Spline(double[] x, double[] y, double y01, double yn1, double X) {
+    public static double[][] spline(double[] x, double[] y, double y01, double yn1) {
 
         // 1,先求 h[N]
         // 2,再求 λ[N] , μ[n]
         // 3,再求 c[N]
-
         int n = x.length;
         double[][] ans = new double[n][2];
         double[] h = new double[n];
@@ -73,10 +75,10 @@ public class Spline {
         //记录答案
 
         //for( int i = 0 ; i <19 ;i ++ )cout<<"   "<<M[i]<<endl;
-        double answer;
+        //double answer;
 
         //根据X确定i  ,确定 所要求值的 区间范围
-
+        /*
         int i = 0;
         while (x[i] <= X) i++;
         i--;
@@ -87,6 +89,40 @@ public class Spline {
         double temp3 = (x[i + 1] - X) / h[i] * (y[i] - h[i] * h[i] / 6.0 * M[i]);
         double temp4 = (X - x[i]) / h[i] * (y[i + 1] - h[i] * h[i] / 6.0 * M[i + 1]);
         answer = temp1 + temp2 + temp3 + temp4;
+
+         */
+        double[][] answer = new double[n][2]; // 第一列 速度， 第二列加速度。
+        /*
+        answer[0][1] = sqrt(2 * y[1] / (x[1] * x[1]));
+        double t_x = y[n - 2] - y[n - 1];
+        double t_t = x[n - 1] - x[n - 2];
+        answer[n - 1][1] = - sqrt(2 * t_x / (t_t * t_t));
+        */
+
+        for (int i = 1; i < n - 1; i ++ ) {
+            double tx = x[i];
+            // 计算一阶导数
+            double temp1 = - pow(x[i + 1] - tx, 2) / (2.0 * h[i])* M[i];
+            double temp2 = pow(x[i] - tx, 2) / (2.0 * h[i])* M[i + 1];
+            double temp3 = h[i] *(M[i] - M[i + 1]) / 6.0;
+            double temp4 = (y[i + 1] - y[i - 1]) / h[i];
+
+            //System.out.println(temp1 + " " + temp2 + " " + temp3 + " " + temp4);
+
+            // 存放一阶导数
+            answer[i][0] = temp1 + temp2 + temp3 + temp4;
+            // 计算二阶导数
+            temp1 = (x[i + 1] - tx) * M[i] / h[i];
+            temp2 = (tx - x[i]) * M[i + 1] / h[i];
+            answer[i][1] = temp1 + temp2;
+        }
+        /*
+        for (int i = 0; i < answer.length; i ++ ){
+            System.out.println(answer[i][0] + " " + answer[i][1]);
+        }
+
+         */
+
         return answer;
     }
     // L U 分解

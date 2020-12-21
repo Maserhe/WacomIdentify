@@ -46,7 +46,7 @@ class HuiTu{
             @Override
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
-
+                /*
                 double[] xx = new double[]{0.52 ,3.1,8.0,17.95,28.65,39.62,50.65,78,104.6,156.6,
                         208.6,260.7,312.5,364.4,416.3,468,494,507,520};
                 double[] yy = new double[]{5.288,9.4,13.84,20.20,24.90,28.44,31.10,35,
@@ -61,6 +61,7 @@ class HuiTu{
                     lastx = i;
                     lasty = t;
                 }
+                 */
             }
         });
         mFrame.addMouseMotionListener(new MouseMotionAdapter() {

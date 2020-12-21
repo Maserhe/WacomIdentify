@@ -5,11 +5,15 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static java.lang.StrictMath.sqrt;
 
 /**
  * @author Maserhe
@@ -28,6 +32,8 @@ public class DrawTest extends JPanel {
     Image image;                            // 图像缓冲。
 
     String csvName;                            // 读写文件的名称
+
+    PointInfo last;
     public DrawTest() {
 
 
@@ -89,7 +95,13 @@ public class DrawTest extends JPanel {
                 newPoint.setPressure(PenData.pressure());
                 newPoint.setAzimuth(PenData.azimuth());
                 //newPoint.setTangentPressure(PenData.tangentPressure());
-                tempPoint.add(newPoint);
+                if (last == null) {
+                    last = newPoint;
+                    tempPoint.add(newPoint);
+                }
+                else if (!last.getTime().equals(newPoint.getTime())){
+                    tempPoint.add(newPoint);
+                }
 
             }
 
@@ -148,30 +160,194 @@ public class DrawTest extends JPanel {
 
         CsvWriter csvWriter = new CsvWriter(csvName, ',', Charset.forName("UTF-8"));
         // 表头和内容
-        String[]  headers = {"x", "y", "pressure", "azimuth", "altitude", "time", "Serial number"};
+        String[]  headers = {"x", "y", "pressure", "azimuth", "altitude", "time", "Serial number" , "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs"};
+
 
         // 写表头和内容，因为csv文件中区分没有那么明确，所以都使用同一函数，写成功就行
         try {
             csvWriter.writeRecord(headers);
-
+            //getSpeed();
+            double[][] ss = doInfo();
+            int index = 0;
             for (int i = 0; i < pointInfo.size(); i ++ ) {
                 for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
                     //String[] content = {String.valueOf(i.get(j).getX()), String.valueOf(i.get(j).getY()),String.valueOf(i.get(j).getPressure()),String.valueOf(i.get(j).getAzimuth()),String.valueOf(i.get(j).getAltitude()),String.valueOf(i.get(j).getTangentPressure()),i.get(j).getTime(), String.valueOf(i + 1)};
-                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),String.valueOf(pointInfo.get(i).get(j).getAltitude()/10),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1)};
+                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),String.valueOf(pointInfo.get(i).get(j).getAltitude()/10),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1), String.valueOf(ss[index][0]), String.valueOf(ss[index][1]),String.valueOf(ss[index][2]), String.valueOf(ss[index][3]),String.valueOf(sqrt(ss[index][0]*ss[index][0] + ss[index][2]*ss[index][2]))};
                     csvWriter.writeRecord(content);
+                    index ++ ;
                 }
             }
-
             pointInfo = new CopyOnWriteArrayList<CopyOnWriteArrayList<PointInfo>>();
             tempPoint = new CopyOnWriteArrayList<PointInfo>();
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         // 关闭csvWriter
         csvWriter.close();
     }
-    // 三次样条插值。
+
+    double[][] getSpeed() throws ParseException {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+        int count = 0;
+        for (int i = 0; i < pointInfo.size(); i ++ ) count += pointInfo.get(i).size();
+
+        double[][] ans = new double[count][4];
+
+        count = 0;
+        for (int i = 0; i < pointInfo.size();i ++ ){
 
 
+            if (pointInfo.get(i).size() <= 2) {
+                System.out.println(pointInfo.get(i).size());
+                count += pointInfo.get(i).size();
+                continue;
+            }
+
+
+            double[] x = new double[pointInfo.get(i).size()];
+            double[] y = new double[pointInfo.get(i).size()];
+            double[] t = new double[pointInfo.get(i).size()];
+
+            double startX = pointInfo.get(0).get(0).getX();
+            double startY = pointInfo.get(0).get(0).getY();
+            double startT = sdf.parse(pointInfo.get(0).get(0).getTime()).getTime();
+
+
+            for (int j = 0; j < pointInfo.get(i).size(); j ++ ){
+
+                x[j] = (double)pointInfo.get(i).get(j).getX() - startX;
+
+                y[j] = (double)pointInfo.get(i).get(j).getY() -startY;
+
+                t[j] = (double)sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT;
+
+                System.out.println(x[j] + "     " + y[i] + "    " + t[i]);
+
+                //System.out.println(pointInfo.get(i).get(j).getX() + " " + pointInfo.get(i).get(j).getY() + " " + pointInfo.get(i).get(j).getTime());
+
+
+            }
+
+            System.out.println(" ------------ ");
+            double [][] arrX = Spline.spline(t, x, 0, 0);
+            double [][] arrY = Spline.spline(t, y,0,0);
+
+            for (int j = 0; j < pointInfo.size(); j ++ ){
+                ans[count][0] = arrX[j][0];
+                ans[count][1] = arrX[j][1];
+                ans[count][2] = arrY[j][0];
+                ans[count][3] = arrY[j][1];
+                count ++ ;
+            }
+
+        }
+        return ans;
+
+    }
+
+
+
+    // 调用三次样条求取速度和加速度。
+    double[][] doInfo() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+
+        int count = 0;
+        for (int i = 0; i < pointInfo.size(); i ++ ) count += pointInfo.get(i).size();
+        if (count == 0) return null;
+
+        double[][] arr = new double[count][4];
+
+        int index = 0;
+        double startX = pointInfo.get(0).get(0).getX();
+        double startY = pointInfo.get(0).get(0).getY();
+
+        double startT = sdf.parse(pointInfo.get(0).get(0).getTime()).getTime();
+
+        for (int i = 0; i < pointInfo.size(); i ++ ) {
+            for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
+                arr[index][0] = (double)pointInfo.get(i).get(j).getX() - startX;
+                arr[index][1] = (double)sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT;
+                arr[index][2] = (double)pointInfo.get(i).get(j).getY() -startY;
+                index ++ ;
+
+                //System.out.println(pointInfo.get(i).get(j).getX() + " " + pointInfo.get(i).get(j).getY() + " " + pointInfo.get(i).get(j).getTime());
+            }
+        }
+        List<Double> listX = new ArrayList<Double>();
+        List<Double> listY = new ArrayList<Double>();
+        List<Double> listT = new ArrayList<Double>();
+        double sumX = arr[0][0];
+        double sumY = arr[0][2];
+
+        double last = startT;
+        int t_count = 1;
+        for (int i = 1; i < count; i ++ ){
+            if (arr[i][1] != last){
+
+                listX.add( sumX / t_count);
+                listY.add( sumY / t_count);
+                listT.add(last);
+                last = arr[i][1];
+                sumX = arr[i][0];
+                sumY = arr[i][2];
+                t_count = 1;
+            }
+            else {
+                t_count ++ ;
+                sumX += arr[i][0];
+                sumY += arr[i][2];
+            }
+        }
+
+        if (sumX > 0) {
+            listX.add( sumX / t_count);
+            listY.add( sumY / t_count);
+            listT.add(last);
+
+        }
+
+        double[] splineX = new double[listX.size()];
+        double[] splineY = new double[listX.size()];
+        double[] splineT = new double[listT.size()];
+
+        for (int i = 0; i < listX.size(); i ++ ){
+            splineX[i] = listX.get(i);
+            splineT[i] = listT.get(i);
+            splineY[i] = listY.get(i);
+            //System.out.println(splineX[i] + " " + splineT[i] + " " + splineY[i]);
+        }
+
+        double[][] t_splinex = Spline.spline(splineT,splineX, 0 , 0);
+        double[][] t_spliney = Spline.spline(splineT,splineY, 0, 0);
+/*
+        for (int i = 0; i < t_splinex.length; i ++ ) {
+            System.out.println(t_splinex[i][0] + "   " + t_splinex[i][1] + " " + t_spliney[i][0] + " " + t_spliney[i][1]);
+        }
+*/
+        last = arr[0][1]; // 第一个起始时间。
+        index = 0;
+        arr[0][0] = t_splinex[0][0];
+        arr[0][1] = t_splinex[0][1];
+        arr[0][2] = t_spliney[0][0];
+        arr[0][3] = t_spliney[0][1];
+
+        for (int i = 1; i < count; i ++ ){
+            if (arr[i][1] != last){
+                last = arr[i][1];
+                index ++ ;
+            }
+            arr[i][0] = t_splinex[index][0];
+            arr[i][1] = t_splinex[index][1];
+
+            arr[i][2] = t_spliney[index][0];
+            arr[i][3] = t_spliney[index][1];
+
+            //System.out.println(arr[i][0] + " " + arr[i][1] + " " + arr[i][2] + " " + arr[i][3]);
+        }
+        return arr;
+    }
 }
