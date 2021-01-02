@@ -2,7 +2,6 @@ import com.csvreader.CsvWriter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -10,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.lang.StrictMath.sqrt;
@@ -24,6 +22,7 @@ public class DrawTest extends JPanel {
 
     CopyOnWriteArrayList<CopyOnWriteArrayList<PointInfo>> pointInfo;
     CopyOnWriteArrayList<PointInfo> tempPoint;
+
     /*
     Vector<Vector<PointInfo>> pointInfo;    // 存储所有点的信息。
     Vector<PointInfo> tempPoint;            // 存储当前笔这一化的信息。
@@ -40,6 +39,7 @@ public class DrawTest extends JPanel {
         // 初始化。
         pointInfo = new CopyOnWriteArrayList<CopyOnWriteArrayList<PointInfo>>();
         tempPoint = new CopyOnWriteArrayList<PointInfo>();
+        last = new PointInfo();
         /*
         pointInfo = new Vector<Vector<PointInfo>>();
         tempPoint = new Vector<PointInfo>();
@@ -74,8 +74,7 @@ public class DrawTest extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                pointInfo.add(tempPoint);
+                if(tempPoint.size() > 3) pointInfo.add(tempPoint);
                 tempPoint = new CopyOnWriteArrayList<PointInfo>();
             }
         });
@@ -93,14 +92,10 @@ public class DrawTest extends JPanel {
                 // 参数z 可以由角度 和 笔的长度 乘以sin 角度得到。
                 newPoint.setAltitude(PenData.altitude());
                 newPoint.setPressure(PenData.pressure());
-                newPoint.setAzimuth(PenData.azimuth());
-                //newPoint.setTangentPressure(PenData.tangentPressure());
-                if (last == null) {
-                    last = newPoint;
-                    tempPoint.add(newPoint);
-                }
-                else if (!last.getTime().equals(newPoint.getTime())){
-                    tempPoint.add(newPoint);
+
+                if (!last.getTime().equals(newPoint.getTime())) {
+                     tempPoint.add(newPoint);
+                     last = newPoint;
                 }
 
             }
@@ -160,19 +155,38 @@ public class DrawTest extends JPanel {
 
         CsvWriter csvWriter = new CsvWriter(csvName, ',', Charset.forName("UTF-8"));
         // 表头和内容
-        String[]  headers = {"x", "y", "pressure", "azimuth", "altitude", "time", "Serial number" , "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs"};
+        String[]  headers = {"milliseconds", "x", "y", "pressure", "altitude", "time", "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs", "Speed_A_abs", "Strokes_Number"};
 
 
         // 写表头和内容，因为csv文件中区分没有那么明确，所以都使用同一函数，写成功就行
         try {
             csvWriter.writeRecord(headers);
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
             //getSpeed();
-            double[][] ss = doInfo();
+            //double[][] ss = doInfo();
+            double[][] ss = getInformation();
+
             int index = 0;
             for (int i = 0; i < pointInfo.size(); i ++ ) {
+                long startT = sdf.parse(pointInfo.get(0).get(0).getTime()).getTime();
                 for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
                     //String[] content = {String.valueOf(i.get(j).getX()), String.valueOf(i.get(j).getY()),String.valueOf(i.get(j).getPressure()),String.valueOf(i.get(j).getAzimuth()),String.valueOf(i.get(j).getAltitude()),String.valueOf(i.get(j).getTangentPressure()),i.get(j).getTime(), String.valueOf(i + 1)};
-                    String[] content = {String.valueOf(pointInfo.get(i).get(j).getX()), String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),String.valueOf(pointInfo.get(i).get(j).getPressure()),String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),String.valueOf(pointInfo.get(i).get(j).getAltitude()/10),pointInfo.get(i).get(j).getTime(), String.valueOf(i + 1), String.valueOf(ss[index][0]), String.valueOf(ss[index][1]),String.valueOf(ss[index][2]), String.valueOf(ss[index][3]),String.valueOf(sqrt(ss[index][0]*ss[index][0] + ss[index][2]*ss[index][2]))};
+                    String[] content = {String.valueOf(sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT),
+                                        String.valueOf(pointInfo.get(i).get(j).getX()),
+                                        String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),
+                                        String.valueOf(pointInfo.get(i).get(j).getPressure()),
+                                        //String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),
+                                        String.valueOf(pointInfo.get(i).get(j).getAltitude()/10),
+                                        pointInfo.get(i).get(j).getTime(),
+                                        String.valueOf(ss[index][0]),
+                                        String.valueOf(ss[index][1]),
+                                        String.valueOf(ss[index][2]),
+                                        String.valueOf(ss[index][3]),
+                                        String.valueOf(sqrt(ss[index][0]*ss[index][0] + ss[index][2]*ss[index][2])),
+                                        String.valueOf(sqrt(ss[index][1]*ss[index][1] + ss[index][3]*ss[index][3])),
+                                        String.valueOf(i + 1)
+                                        };
+
                     csvWriter.writeRecord(content);
                     index ++ ;
                 }
@@ -199,7 +213,6 @@ public class DrawTest extends JPanel {
 
         count = 0;
         for (int i = 0; i < pointInfo.size();i ++ ){
-
 
             if (pointInfo.get(i).size() <= 2) {
                 System.out.println(pointInfo.get(i).size());
@@ -349,5 +362,69 @@ public class DrawTest extends JPanel {
             //System.out.println(arr[i][0] + " " + arr[i][1] + " " + arr[i][2] + " " + arr[i][3]);
         }
         return arr;
+    }
+
+    // 通过三次样条获取速度。返回一个四列的二维数组。 1，x速度 2，x加速度 3, y轴速度 4，y轴加速度。
+    double[][] getInformation() throws ParseException {
+
+        int index = 0;
+        for (int i = 0; i < pointInfo.size(); i ++ ) index += pointInfo.get(i).size();
+        // 创建返回的结果。
+        double[][] answer = new double[index][4];
+        index = 0;
+
+        // 时间格式。
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+        for (int i = 0; i < pointInfo.size(); i ++ ) {
+            // 对于每一条线。// 一条线的点数。
+            int count = pointInfo.get(i).size();
+            double startX = pointInfo.get(i).get(0).getX();
+            double startY = pointInfo.get(i).get(0).getY();
+            double startT = sdf.parse(pointInfo.get(i).get(0).getTime()).getTime();
+            // 创建可以 用于三次样条计算的 数组。
+
+            double[] tInfo = new double[count];
+            double[] xInfo = new double[count];
+            double[] yInfo = new double[count];
+
+            for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
+
+                xInfo[j] = pointInfo.get(i).get(j).getX() - startX;
+                yInfo[j] = pointInfo.get(i).get(j).getY() - startY;
+                tInfo[j] = sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT;
+            }
+
+            /*
+            for (int j = 0; j < count; j ++ ) {
+                System.out.print(xInfo[j] + " ");
+                System.out.print(yInfo[j] + " ");
+                System.out.println(tInfo[j]);
+            }
+             */
+
+
+            // 进行三次样条计算。返回一个二位数组，第一列速度，第二列加速度。
+            double[][] ansX = Spline.spline(tInfo, xInfo, 0, 0);
+            double[][] ansY = Spline.spline(tInfo, yInfo, 0, 0);
+
+            for (int j = 0; j < count; j ++ ){
+                System.out.println(ansX[j][0] + " " + ansX[j][1] + " ------- " + ansY[j][0] + " " + ansY[j][1]);
+            }
+
+            // 将结果保存。
+            for (int j = 0; j < count; j ++ ) {
+                answer[index][0] = ansX[j][0];
+                answer[index][1] = ansX[j][1];
+                answer[index][2] = ansY[j][0];
+                answer[index][3] = ansY[j][1];
+                index ++ ;
+            }
+        }
+
+        /*
+        for (int i = 0; i < answer.length; i ++ ){
+            System.out.println(answer[i][0] + " " + answer[i][1] + " " + answer[i][2] + " " + answer[i][3]);
+        }*/
+        return answer;
     }
 }

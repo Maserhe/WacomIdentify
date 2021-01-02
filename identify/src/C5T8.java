@@ -46,22 +46,28 @@ class HuiTu{
             @Override
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
-                /*
+                // 对19个散列点进行拟合曲线
                 double[] xx = new double[]{0.52 ,3.1,8.0,17.95,28.65,39.62,50.65,78,104.6,156.6,
                         208.6,260.7,312.5,364.4,416.3,468,494,507,520};
                 double[] yy = new double[]{5.288,9.4,13.84,20.20,24.90,28.44,31.10,35,
                         36.9,36.6,34.6,31.0,26.34,20.9,14.8,7.8,3.7,1.5,0.2};
-                double lastx = 0.52;
-                double lasty = 5.288;
-                Graphics g =mFrame.getGraphics();
-                for(double i= 1 ; i < 520 ; i += 1 ){
-                    double t = Spline.Spline(xx,yy,0,0, i) * 10;
-                    g.drawLine((int)lastx,(int)lasty, (int)i,(int)t);
-                    System.out.println(t + "  " + i);
-                    lastx = i;
-                    lasty = t;
+
+                Graphics g = mFrame.getGraphics();
+
+                double[][] t = Spline.spline(xx,yy,0,0, 0.5);
+
+                System.out.println("拟合的总点数"+ t.length);
+                double lastx = t[0][0] ;
+                double lasty = t[0][1] * 10;
+
+                for (int i = 0; i < t.length; i ++ ) {
+
+                    g.drawLine((int)lastx,(int)lasty, (int)t[i][0],(int)(t[i][1] * 10));
+                    lastx = t[i][0] ;
+                    lasty = t[i][1] * 10;
+
                 }
-                 */
+
             }
         });
         mFrame.addMouseMotionListener(new MouseMotionAdapter() {
@@ -93,13 +99,7 @@ class HuiTu{
 
 public class C5T8 {
     public static void main(String[] args) {
-
         // TODO Auto-generated method stub
-
         new HuiTu();
-
     }
-
-
-
 }

@@ -25,7 +25,7 @@ public class PointInfo {
     public PointInfo() {
         x = 0;
         y = 0;
-
+        time = "";
     }
 
     // set && get
