@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @author Maserhe
  * @Date 2020-11-29  23:48
  *
- * 实现 画板。
+ * 实现 画板。测试绘图画着玩的。
  */
 
 public class DrawPanel extends JPanel {

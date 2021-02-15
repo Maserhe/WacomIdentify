@@ -21,6 +21,7 @@ public class StartUI extends JFrame {
     private JPanel panel2 = new JPanel();
     private JPanel panel3 = new JPanel();
     private JPanel panel4 = new JPanel();
+    private JPanel panel5 = new JPanel();
 
     private JButton startButton = new JButton("开始");
     private JButton stopButton = new JButton("结束");
@@ -41,6 +42,11 @@ public class StartUI extends JFrame {
     private JRadioButton radiobutton8 = new JRadioButton("复杂任务",false);
     private JRadioButton radiobutton9 = new JRadioButton("自由书写",false);
 
+    private ButtonGroup group4 = new ButtonGroup();
+    private JRadioButton radiobutton10 = new JRadioButton("block1",true);
+    private JRadioButton radiobutton11 = new JRadioButton("block2",false);
+
+
     private JLabel jlabel1 = new JLabel();
     private JTextField jtext1 = new JTextField(20);
 
@@ -56,6 +62,8 @@ public class StartUI extends JFrame {
         panel3.setBounds(10, 130, 343, 45);
         panel4.setBounds(10, 190, 343, 45);
         panel1.setBounds(10, 300, 343, 45);
+        panel5.setBounds(10,250, 343,45);
+
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -90,6 +98,14 @@ public class StartUI extends JFrame {
         group3.add(radiobutton8);
         group3.add(radiobutton9);
 
+
+        radiobutton10.setBounds(60, 35, 75, 37);
+        radiobutton11.setBounds(190, 35, 75, 37);
+        group4.add(radiobutton10);
+        group4.add(radiobutton11);
+
+
+
         startButton.setBounds(35, 350, 294, 27);
 
         // 添加控件。
@@ -109,11 +125,15 @@ public class StartUI extends JFrame {
         panel4.add(radiobutton8);
         panel4.add(radiobutton9);
 
+        panel5.add(radiobutton10);
+        panel5.add(radiobutton11);
+
         container.add(panel0);
         container.add(panel2);
         container.add(panel3);
         container.add(panel4);
         container.add(panel1);
+        container.add(panel5);
 
         setVisible(true);
         startButton.addActionListener(new ActionListener() {

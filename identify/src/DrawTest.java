@@ -86,12 +86,13 @@ public class DrawTest extends JPanel {
                 //PenData.refresh();
                 PointInfo newPoint = new PointInfo();
                 //设置当前点的信息， 以及众多的参数。
-                newPoint.setTime(new SimpleDateFormat("HH:mm:ss:SS").format(new Date()));
+                newPoint.setTime(new SimpleDateFormat("yy:MM:dd:HH:mm:ss:SS").format(new Date()));
                 newPoint.setX(e.getX());
                 newPoint.setY(e.getY());
                 // 参数z 可以由角度 和 笔的长度 乘以sin 角度得到。
                 newPoint.setAltitude(PenData.altitude());
                 newPoint.setPressure(PenData.pressure());
+                newPoint.setAzimuth(PenData.azimuth());
 
                 if (!last.getTime().equals(newPoint.getTime())) {
                      tempPoint.add(newPoint);
@@ -155,27 +156,29 @@ public class DrawTest extends JPanel {
 
         CsvWriter csvWriter = new CsvWriter(csvName, ',', Charset.forName("UTF-8"));
         // 表头和内容
-        String[]  headers = {"milliseconds", "x", "y", "pressure", "altitude", "time", "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs", "Speed_A_abs", "Strokes_Number"};
+        String[]  headers = {"milliseconds", "x", "y", "pressure", "azimuth", "altitude", "time", "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs", "Speed_A_abs", "Strokes_Number", "PerStrokes_Time"};
 
 
         // 写表头和内容，因为csv文件中区分没有那么明确，所以都使用同一函数，写成功就行
         try {
             csvWriter.writeRecord(headers);
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+            SimpleDateFormat sdf = new SimpleDateFormat("yy:MM:dd:HH:mm:ss:SS");
             //getSpeed();
             //double[][] ss = doInfo();
             double[][] ss = getInformation();
 
             int index = 0;
+
             for (int i = 0; i < pointInfo.size(); i ++ ) {
                 long startT = sdf.parse(pointInfo.get(0).get(0).getTime()).getTime();
+                long startPerPenDraw = sdf.parse(pointInfo.get(i).get(0).getTime()).getTime();
                 for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
                     //String[] content = {String.valueOf(i.get(j).getX()), String.valueOf(i.get(j).getY()),String.valueOf(i.get(j).getPressure()),String.valueOf(i.get(j).getAzimuth()),String.valueOf(i.get(j).getAltitude()),String.valueOf(i.get(j).getTangentPressure()),i.get(j).getTime(), String.valueOf(i + 1)};
                     String[] content = {String.valueOf(sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT),
                                         String.valueOf(pointInfo.get(i).get(j).getX()),
                                         String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),
                                         String.valueOf(pointInfo.get(i).get(j).getPressure()),
-                                        //String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),
+                                        String.valueOf(pointInfo.get(i).get(j).getAzimuth()/10),
                                         String.valueOf(pointInfo.get(i).get(j).getAltitude()/10),
                                         pointInfo.get(i).get(j).getTime(),
                                         String.valueOf(ss[index][0]),
@@ -184,7 +187,8 @@ public class DrawTest extends JPanel {
                                         String.valueOf(ss[index][3]),
                                         String.valueOf(sqrt(ss[index][0]*ss[index][0] + ss[index][2]*ss[index][2])),
                                         String.valueOf(sqrt(ss[index][1]*ss[index][1] + ss[index][3]*ss[index][3])),
-                                        String.valueOf(i + 1)
+                                        String.valueOf(i + 1),
+                                        String.valueOf(sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startPerPenDraw)
                                         };
 
                     csvWriter.writeRecord(content);
@@ -205,7 +209,7 @@ public class DrawTest extends JPanel {
 
     double[][] getSpeed() throws ParseException {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy:MM:dd:HH:mm:ss:SS");
         int count = 0;
         for (int i = 0; i < pointInfo.size(); i ++ ) count += pointInfo.get(i).size();
 
@@ -266,7 +270,7 @@ public class DrawTest extends JPanel {
 
     // 调用三次样条求取速度和加速度。
     double[][] doInfo() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy:MM:dd:HH:mm:ss:SS");
 
         int count = 0;
         for (int i = 0; i < pointInfo.size(); i ++ ) count += pointInfo.get(i).size();
@@ -374,7 +378,7 @@ public class DrawTest extends JPanel {
         index = 0;
 
         // 时间格式。
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy:MM:dd:HH:mm:ss:SS");
         for (int i = 0; i < pointInfo.size(); i ++ ) {
             // 对于每一条线。// 一条线的点数。
             int count = pointInfo.get(i).size();
@@ -394,15 +398,6 @@ public class DrawTest extends JPanel {
                 tInfo[j] = sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT;
             }
 
-            /*
-            for (int j = 0; j < count; j ++ ) {
-                System.out.print(xInfo[j] + " ");
-                System.out.print(yInfo[j] + " ");
-                System.out.println(tInfo[j]);
-            }
-             */
-
-
             // 进行三次样条计算。返回一个二位数组，第一列速度，第二列加速度。
             double[][] ansX = Spline.spline(tInfo, xInfo, 0, 0);
             double[][] ansY = Spline.spline(tInfo, yInfo, 0, 0);
@@ -421,10 +416,6 @@ public class DrawTest extends JPanel {
             }
         }
 
-        /*
-        for (int i = 0; i < answer.length; i ++ ){
-            System.out.println(answer[i][0] + " " + answer[i][1] + " " + answer[i][2] + " " + answer[i][3]);
-        }*/
         return answer;
     }
 }
