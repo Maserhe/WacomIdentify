@@ -2,6 +2,7 @@ import com.csvreader.CsvWriter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -20,6 +21,7 @@ import static java.lang.StrictMath.sqrt;
 
 public class DrawTest extends JPanel {
 
+
     CopyOnWriteArrayList<CopyOnWriteArrayList<PointInfo>> pointInfo;
     CopyOnWriteArrayList<PointInfo> tempPoint;
 
@@ -30,7 +32,7 @@ public class DrawTest extends JPanel {
     Graphics og;
     Image image;                            // 图像缓冲。
 
-    String csvName;                            // 读写文件的名称
+    String csvName;                         // 读写文件的名称
 
     PointInfo last;
     public DrawTest() {
@@ -105,7 +107,11 @@ public class DrawTest extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                writeCsv();
+                try {
+                    writeCsv();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 og = null;
             }
         });
@@ -131,7 +137,6 @@ public class DrawTest extends JPanel {
             for (int i = 1; i < tempPoint.size(); i ++ ) {
                 if (i < tempPoint.size())tempG.drawLine(tempPoint.get(i - 1).getX(), tempPoint.get(i - 1).getY(),tempPoint.get(i).getX(),tempPoint.get(i).getY());
             }
-
             // 然后把每一个笔画都给绘出来。
             for (CopyOnWriteArrayList<PointInfo> i: pointInfo) {
                 for (int j = 1; j < i.size(); j ++ ) {
@@ -149,19 +154,30 @@ public class DrawTest extends JPanel {
         g.drawImage(image, 0, 0, this);     // 进行2D绘图
     }
 
-    void writeCsv(){
-        if (csvName == null) {
-            csvName = "Maserhe.csv";
+    void writeCsv() throws IOException {
+
+        // 文件名
+        if (StartUI.userName.equals("")) StartUI.userName = "null";
+        // 创建文件路径
+        String path = System.getProperty("user.dir") +"/data/"+ StartUI.userName;
+
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs(); // 创建文件目录
         }
 
-        CsvWriter csvWriter = new CsvWriter(csvName, ',', Charset.forName("UTF-8"));
+        File csvFile = new File(path, StartUI.userName + ".csv");
+        if (!csvFile.exists()) {
+            csvFile.createNewFile();
+        }
+
+        CsvWriter csvWriter = new CsvWriter(path + "/" + StartUI.userName + ".csv", ',', Charset.forName("UTF-8"));
         // 表头和内容
         String[]  headers = {"milliseconds", "x", "y", "pressure", "azimuth", "altitude", "time", "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs", "Speed_A_abs", "Strokes_Number", "PerStrokes_Time"};
 
-
         // 写表头和内容，因为csv文件中区分没有那么明确，所以都使用同一函数，写成功就行
         try {
-            csvWriter.writeRecord(headers);
+            csvWriter.writeRecord(headers); // 可以传入第二个参数， 将写入csv中的文件进行追加。
             SimpleDateFormat sdf = new SimpleDateFormat("yy:MM:dd:HH:mm:ss:SS");
             //getSpeed();
             //double[][] ss = doInfo();

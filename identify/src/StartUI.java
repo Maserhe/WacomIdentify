@@ -1,6 +1,6 @@
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +15,21 @@ public class StartUI extends JFrame {
     public static void main(String[] args) {
         StartUI startUI = new StartUI();
     }
+
+    // 用户名 实验者名字。
+    public static String userName = "Maserhe";
+
+    // 笔迹信息  0 真实笔迹 1，简单伪造 2，熟练伪造
+    public static int handwritingStatus = 0;
+
+    // 笔迹内容信息 0, 规定内容， 1， 非规定内容， 2，签名
+    public static  int contentInfoStatus = 0;
+
+    // 任务信息 0，单一任务， 1，复杂任务 2，自由书写。
+    public static int taskInfoStatus = 0;
+
+    // 实验状态信息 0， 首次实验， 1，非首次实验。
+    public static int frequencyInfo = 0;
 
     private JPanel panel0 = new JPanel();
     private JPanel panel1 = new JPanel();
@@ -43,8 +58,8 @@ public class StartUI extends JFrame {
     private JRadioButton radiobutton9 = new JRadioButton("自由书写",false);
 
     private ButtonGroup group4 = new ButtonGroup();
-    private JRadioButton radiobutton10 = new JRadioButton("block1",true);
-    private JRadioButton radiobutton11 = new JRadioButton("block2",false);
+    private JRadioButton radiobutton10 = new JRadioButton("首次实验",true);
+    private JRadioButton radiobutton11 = new JRadioButton("非首次实验",false);
 
 
     private JLabel jlabel1 = new JLabel();
@@ -72,7 +87,7 @@ public class StartUI extends JFrame {
 
         jlabel1.setBounds(20, 40, 135, 25);
         jtext1.setBounds(20, 45, 108, 24);
-        jtext1.setFont(new Font("        ", Font.PLAIN, 11));
+        jtext1.setFont(new Font("     ", Font.PLAIN, 11));
 
         radiobutton1.setBounds(60, 85, 75, 27);
         radiobutton2.setBounds(190, 85, 75, 27);
@@ -141,6 +156,110 @@ public class StartUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                new Thread(new Dialog()).start();
             }
+        });
+
+        // 第一组监听事件
+        ActionListener listener1 = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String actionCommand = e.getActionCommand();
+                if ("真实笔迹".equals(actionCommand)) {
+                    handwritingStatus = 0;
+                } else if ("简单伪造".equals(actionCommand)) {
+                    handwritingStatus = 1;
+                } else if ("熟练伪造".equals(actionCommand)) {
+                    handwritingStatus = 2;
+                }
+                System.out.println("书写状态" + handwritingStatus);
+            }
+        };
+
+        // 开启监听 第一组监听
+        radiobutton1.addActionListener(listener1);
+        radiobutton2.addActionListener(listener1);
+        radiobutton3.addActionListener(listener1);
+
+        // 第二组监听事件
+        ActionListener listener2 = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String actionCommand = e.getActionCommand();
+                if ("规定".equals(actionCommand)) {
+                    contentInfoStatus = 0;
+                } else if ("非规定".equals(actionCommand)) {
+                    contentInfoStatus = 1;
+                } else if ("签名".equals(actionCommand)) {
+                    contentInfoStatus = 2;
+                }
+                System.out.println("规定状态" + contentInfoStatus);
+            }
+        };
+
+        // 开启监听 第二组监听
+        radiobutton4.addActionListener(listener2);
+        radiobutton5.addActionListener(listener2);
+        radiobutton6.addActionListener(listener2);
+
+        // 第三组监听事件
+        ActionListener listener3 = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String actionCommand = e.getActionCommand();
+                if ("单一任务".equals(actionCommand)) {
+                    taskInfoStatus = 0;
+                } else if ("复杂任务".equals(actionCommand)) {
+                    taskInfoStatus = 1;
+                } else if ("自由书写".equals(actionCommand)) {
+                    taskInfoStatus = 2;
+                }
+                System.out.println("任务状态" + taskInfoStatus);
+            }
+        };
+
+        // 开启监听 第三组监听
+        radiobutton7.addActionListener(listener3);
+        radiobutton8.addActionListener(listener3);
+        radiobutton9.addActionListener(listener3);
+
+        // 第四组监听事件
+        ActionListener listener4 = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String actionCommand = e.getActionCommand();
+                if ("首次实验".equals(actionCommand)) {
+                    frequencyInfo = 0;
+                } else if ("非首次实验".equals(actionCommand)) {
+                    frequencyInfo = 1;
+                }
+                System.out.println("实验状态" + frequencyInfo);
+            }
+        };
+
+        radiobutton10.addActionListener(listener4);
+        radiobutton11.addActionListener(listener4);
+
+        // 默认实验者名
+        jtext1.setText(userName);
+        // 实验者姓名的监听。
+        jtext1.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                userName = jtext1.getText().trim();
+                System.out.println("插入信息" + userName);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                userName = jtext1.getText().trim();
+                System.out.println("删除信息" + userName);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+
+
         });
     }
 }
