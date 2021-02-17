@@ -154,6 +154,7 @@ public class StartUI extends JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                DrawTest.number = 1;
                new Thread(new Dialog()).start();
             }
         });

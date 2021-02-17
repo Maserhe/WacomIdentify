@@ -21,6 +21,8 @@ import static java.lang.StrictMath.sqrt;
 
 public class DrawTest extends JPanel {
 
+    // 字的个数
+    public static int number = 1;
 
     CopyOnWriteArrayList<CopyOnWriteArrayList<PointInfo>> pointInfo;
     CopyOnWriteArrayList<PointInfo> tempPoint;
@@ -109,6 +111,7 @@ public class DrawTest extends JPanel {
             public void keyPressed(KeyEvent e) {
                 try {
                     writeCsv();
+                    number ++ ;
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
@@ -162,16 +165,23 @@ public class DrawTest extends JPanel {
         String path = System.getProperty("user.dir") +"/data/"+ StartUI.userName;
 
         File f = new File(path);
+        String[] dirs = {"规定", "非规定", "签名"};
+        String[] status = {"真实笔迹", "简单伪造", "熟练伪造"};
+
         if (!f.exists()) {
             f.mkdirs(); // 创建文件目录
+            for (int i = 0; i < dirs.length; i ++ ) {
+                f = new File(path + "/" + dirs[i]);
+                f.mkdir();
+            }
         }
 
-        File csvFile = new File(path, StartUI.userName + ".csv");
+        File csvFile = new File(path + "/" + dirs[StartUI.contentInfoStatus] , StartUI.userName + "-"+ status[StartUI.handwritingStatus] + "-" + number +".csv");
         if (!csvFile.exists()) {
             csvFile.createNewFile();
         }
 
-        CsvWriter csvWriter = new CsvWriter(path + "/" + StartUI.userName + ".csv", ',', Charset.forName("UTF-8"));
+        CsvWriter csvWriter = new CsvWriter(path + "/" + dirs[StartUI.contentInfoStatus] + "/" + StartUI.userName + "-" + status[StartUI.handwritingStatus] + "-" + number + ".csv", ',', Charset.forName("UTF-8"));
         // 表头和内容
         String[]  headers = {"milliseconds", "x", "y", "pressure", "azimuth", "altitude", "time", "Speed_x", "Speed_Ax", "Speed_y", "Speed_Ay", "Speed_abs", "Speed_A_abs", "Strokes_Number", "PerStrokes_Time"};
 
@@ -182,7 +192,6 @@ public class DrawTest extends JPanel {
             //getSpeed();
             //double[][] ss = doInfo();
             double[][] ss = getInformation();
-
             int index = 0;
 
             for (int i = 0; i < pointInfo.size(); i ++ ) {
@@ -190,7 +199,8 @@ public class DrawTest extends JPanel {
                 long startPerPenDraw = sdf.parse(pointInfo.get(i).get(0).getTime()).getTime();
                 for (int j = 0; j < pointInfo.get(i).size(); j ++ ) {
                     //String[] content = {String.valueOf(i.get(j).getX()), String.valueOf(i.get(j).getY()),String.valueOf(i.get(j).getPressure()),String.valueOf(i.get(j).getAzimuth()),String.valueOf(i.get(j).getAltitude()),String.valueOf(i.get(j).getTangentPressure()),i.get(j).getTime(), String.valueOf(i + 1)};
-                    String[] content = {String.valueOf(sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT),
+                    String[] content = {
+                                        String.valueOf(sdf.parse(pointInfo.get(i).get(j).getTime()).getTime() - startT),
                                         String.valueOf(pointInfo.get(i).get(j).getX()),
                                         String.valueOf(Toolkit.getDefaultToolkit().getScreenSize().height - pointInfo.get(i).get(j).getY()),
                                         String.valueOf(pointInfo.get(i).get(j).getPressure()),
