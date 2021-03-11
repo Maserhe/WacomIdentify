@@ -1,4 +1,6 @@
 import com.csvreader.CsvWriter;
+import org.w3c.dom.css.Rect;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -112,10 +114,12 @@ public class DrawTest extends JPanel {
                 try {
                     writeCsv();
                     number ++ ;
+
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
                 og = null;
+                ReadCSV.number ++ ;
             }
         });
 
@@ -129,14 +133,43 @@ public class DrawTest extends JPanel {
             if (image != null) og = image.getGraphics();
         }
 
+
         if (og != null) {
             super.paint(og);    //调用父类的  paint 会刷新屏幕。
             // 画笔加粗,向下强制转型。
             Graphics2D tempG = (Graphics2D)og;
-            tempG.setStroke(new BasicStroke(4.0f));
+
             // 开始画图。
             // 先把 当前画笔里面的 先画出来。
+            Rectangle rectangle = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize().width / 5,Toolkit.getDefaultToolkit().getScreenSize().height / 5);
+            tempG.setColor(Color.pink);
+            tempG.fill(rectangle);
+            tempG.setColor(Color.black);
+            tempG.setStroke(new BasicStroke(2.0f));
 
+            if (ReadCSV.status == 0) {
+                if (ReadCSV.number < StartUI.info0.size() ) {
+                    tempG.setFont(new Font("微软雅黑", Font.BOLD, 80));
+                    tempG.drawString(StartUI.info0.get(ReadCSV.number), Toolkit.getDefaultToolkit().getScreenSize().height / 10,Toolkit.getDefaultToolkit().getScreenSize().height / 10);
+                }
+            }
+
+            if (ReadCSV.status == 1) {
+
+                ArrayList<ArrayList<WritePoint>> info = StartUI.info1;
+                for (ArrayList<WritePoint> list : info) {
+                    int startX = list.get(0).getX();
+                    int startY = Toolkit.getDefaultToolkit().getScreenSize().height - list.get(0).getY();
+
+                    for (WritePoint writePoint : list) {
+                        tempG.drawLine(startX / 5 , startY / 5 , writePoint.getX() / 5,Toolkit.getDefaultToolkit().getScreenSize().height / 5 - writePoint.getY() / 5);
+                        startX = writePoint.getX();
+                        startY = Toolkit.getDefaultToolkit().getScreenSize().height - writePoint.getY();
+                    }
+                }
+            }
+
+            tempG.setStroke(new BasicStroke(4.0f));
             for (int i = 1; i < tempPoint.size(); i ++ ) {
                 if (i < tempPoint.size())tempG.drawLine(tempPoint.get(i - 1).getX(), tempPoint.get(i - 1).getY(),tempPoint.get(i).getX(),tempPoint.get(i).getY());
             }
@@ -147,6 +180,9 @@ public class DrawTest extends JPanel {
                     //System.out.println(i.get(j - 1).getX() + "<--->" + i.get(j - 1).getY() + "<--->" + i.get(j - 1).getAltitude() + "<--->" + i.get(j - 1).getAzimuth() + "<--->" + i.get(j - 1).getTime());
                 }
             }
+
+
+
         }
         // 重新绘制。
         this.repaint();
@@ -291,7 +327,6 @@ public class DrawTest extends JPanel {
         return ans;
 
     }
-
 
 
     // 调用三次样条求取速度和加速度。
@@ -441,7 +476,7 @@ public class DrawTest extends JPanel {
                 index ++ ;
             }
         }
-
         return answer;
     }
+
 }

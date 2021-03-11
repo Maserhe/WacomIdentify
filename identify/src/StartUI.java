@@ -4,6 +4,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * @author Maserhe
@@ -30,6 +31,10 @@ public class StartUI extends JFrame {
 
     // 实验状态信息 0， 首次实验， 1，非首次实验。
     public static int frequencyInfo = 0;
+
+    public static ArrayList<String> info0;
+
+    public static ArrayList<ArrayList<WritePoint>> info1;
 
     private JPanel panel0 = new JPanel();
     private JPanel panel1 = new JPanel();
@@ -155,7 +160,15 @@ public class StartUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DrawTest.number = 1;
-               new Thread(new Dialog()).start();
+                // 根据信息读取获取的信息。
+
+                // 默认读取文件。
+                //ReadCSV.path = ReadCSV.path = System.getProperty("user.dir") + "/" + "123465.csv";
+                //ReadCSV.status = 1;
+                //ReadCSV.number = 0;
+                //info1 = ReadCSV.getInfo1();
+                ReadCSV.number = 0;
+                new Thread(new Dialog()).start();
             }
         });
 

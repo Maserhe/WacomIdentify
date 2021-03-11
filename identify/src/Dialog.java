@@ -25,6 +25,15 @@ public class Dialog extends JFrame implements Runnable {
     @Override
     public void run() {
         while (true) {
+
+            ReadCSV.path = ReadCSV.path = System.getProperty("user.dir") + "/" + "Order1.csv";
+            ReadCSV.status = 0;
+            StartUI.info0 = ReadCSV.getInfo0(1);
+
+            //ReadCSV.path = ReadCSV.path = System.getProperty("user.dir") + "/" + "123465.csv";
+            //ReadCSV.status = 1;
+            //StartUI.info1 = ReadCSV.getInfo1();
+
             drawPanel.paintComponent();
             PenData.refresh();
             try {
