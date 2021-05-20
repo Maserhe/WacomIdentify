@@ -3,8 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/penIndentify_jar</output-path>
     <root id="archive" name="penIndentify.jar">
       <element id="module-output" name="penIndentify" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../Java_jar/jtablet.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../Java_jar/javacsv.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

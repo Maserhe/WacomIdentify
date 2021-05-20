@@ -52,6 +52,7 @@ public class ReadCSV {
 
     // 读取csv 生成二维Arraylist
     public static ArrayList<ArrayList<WritePoint>> getInfo1() {
+
         if (status != 1) return null;
         ArrayList<ArrayList<WritePoint>> ans = new ArrayList<ArrayList<WritePoint>>();
         CsvReader csvReader = null;

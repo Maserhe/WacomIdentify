@@ -53,18 +53,20 @@ public class StartUI extends JFrame {
     private JRadioButton radiobutton3 = new JRadioButton("熟练伪造",false);
 
     private ButtonGroup group2 = new ButtonGroup();
-    private JRadioButton radiobutton4 = new JRadioButton("规定",true);	//声明单旋钮，默认设备为Display
-    private JRadioButton radiobutton5 = new JRadioButton("非规定",false);
-    private JRadioButton radiobutton6 = new JRadioButton("签名",false);
+    private JRadioButton radiobutton4 = new JRadioButton("规定内容",true);	//声明单旋钮，默认设备为Display
+    private JRadioButton radiobutton5 = new JRadioButton("自由内容",false);
+    private JRadioButton radiobutton6 = new JRadioButton("个人签名",false);
 
     private ButtonGroup group3 = new ButtonGroup();
-    private JRadioButton radiobutton7 = new JRadioButton("单一任务",true);
-    private JRadioButton radiobutton8 = new JRadioButton("复杂任务",false);
-    private JRadioButton radiobutton9 = new JRadioButton("自由书写",false);
+    private JRadioButton radiobutton8 = new JRadioButton("简单任务",false);
+    private JRadioButton radiobutton9 = new JRadioButton("复杂任务",false);
 
     private ButtonGroup group4 = new ButtonGroup();
-    private JRadioButton radiobutton10 = new JRadioButton("首次实验",true);
-    private JRadioButton radiobutton11 = new JRadioButton("非首次实验",false);
+    private JRadioButton radiobutton10 = new JRadioButton("block1",true);
+    private JRadioButton radiobutton11 = new JRadioButton("block2",true);
+    private JRadioButton radiobutton12 = new JRadioButton("block3",false);
+    private JRadioButton radiobutton13 = new JRadioButton("block4",false);
+    private JRadioButton radiobutton14 = new JRadioButton("block5",false);
 
 
     private JLabel jlabel1 = new JLabel();
@@ -76,7 +78,8 @@ public class StartUI extends JFrame {
         Container container = this.getContentPane();
         container.setLayout(null);
 
-        setBounds(480, 260, 370, 450);
+        setBounds(480, 260, 390, 450);
+
         panel0.setBounds(10,10,343,45);
         panel2.setBounds(10, 70, 343, 45);
         panel3.setBounds(10, 130, 343, 45);
@@ -111,19 +114,25 @@ public class StartUI extends JFrame {
         group2.add(radiobutton6);
 
 
-        radiobutton7.setBounds(60, 35, 75, 37);
+        // radiobutton7.setBounds(60, 35, 75, 37);
         radiobutton8.setBounds(190, 35, 75, 37);
         radiobutton9.setBounds(190, 35, 75, 37);
-        group3.add(radiobutton7);
+        // group3.add(radiobutton7);
         group3.add(radiobutton8);
         group3.add(radiobutton9);
 
 
-        radiobutton10.setBounds(60, 35, 75, 37);
-        radiobutton11.setBounds(190, 35, 75, 37);
+        radiobutton10.setBounds(30, 35, 75, 37);
+        radiobutton11.setBounds(130, 35, 75, 37);
+        radiobutton12.setBounds(230, 35, 75, 37);
+        radiobutton13.setBounds(330, 35, 75, 37);
+        radiobutton14.setBounds(430, 35, 75, 37);
+
         group4.add(radiobutton10);
         group4.add(radiobutton11);
-
+        group4.add(radiobutton12);
+        group4.add(radiobutton13);
+        group4.add(radiobutton14);
 
 
         startButton.setBounds(35, 350, 294, 27);
@@ -141,12 +150,16 @@ public class StartUI extends JFrame {
         panel3.add(radiobutton5);
         panel3.add(radiobutton6);
 
-        panel4.add(radiobutton7);
+        // panel4.add(radiobutton7);
         panel4.add(radiobutton8);
         panel4.add(radiobutton9);
 
         panel5.add(radiobutton10);
         panel5.add(radiobutton11);
+        panel5.add(radiobutton12);
+        panel5.add(radiobutton13);
+        panel5.add(radiobutton14);
+
 
         container.add(panel0);
         container.add(panel2);
@@ -198,11 +211,11 @@ public class StartUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String actionCommand = e.getActionCommand();
-                if ("规定".equals(actionCommand)) {
+                if ("规定内容".equals(actionCommand)) {
                     contentInfoStatus = 0;
-                } else if ("非规定".equals(actionCommand)) {
+                } else if ("自由内容".equals(actionCommand)) {
                     contentInfoStatus = 1;
-                } else if ("签名".equals(actionCommand)) {
+                } else if ("个人签名".equals(actionCommand)) {
                     contentInfoStatus = 2;
                 }
                 System.out.println("规定状态" + contentInfoStatus);
@@ -219,19 +232,17 @@ public class StartUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String actionCommand = e.getActionCommand();
-                if ("单一任务".equals(actionCommand)) {
+                if ("简单任务".equals(actionCommand)) {
                     taskInfoStatus = 0;
                 } else if ("复杂任务".equals(actionCommand)) {
                     taskInfoStatus = 1;
-                } else if ("自由书写".equals(actionCommand)) {
-                    taskInfoStatus = 2;
                 }
-                System.out.println("任务状态" + taskInfoStatus);
+                System.out.println("任务难度" + taskInfoStatus);
             }
         };
 
         // 开启监听 第三组监听
-        radiobutton7.addActionListener(listener3);
+        // radiobutton7.addActionListener(listener3);
         radiobutton8.addActionListener(listener3);
         radiobutton9.addActionListener(listener3);
 
@@ -240,17 +251,27 @@ public class StartUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String actionCommand = e.getActionCommand();
-                if ("首次实验".equals(actionCommand)) {
-                    frequencyInfo = 0;
-                } else if ("非首次实验".equals(actionCommand)) {
+                if ("block1".equals(actionCommand)) {
                     frequencyInfo = 1;
+                } else if ("block2".equals(actionCommand)) {
+                    frequencyInfo = 2;
+                } else if ("block3".equals(actionCommand)) {
+                    frequencyInfo = 3;
+                } else if ("block4".equals(actionCommand)) {
+                    frequencyInfo = 4;
+                } else if ("block5".equals(actionCommand)) {
+                    frequencyInfo = 5;
                 }
-                System.out.println("实验状态" + frequencyInfo);
+                System.out.println("实验次数" + frequencyInfo);
             }
         };
 
         radiobutton10.addActionListener(listener4);
         radiobutton11.addActionListener(listener4);
+        radiobutton12.addActionListener(listener4);
+        radiobutton13.addActionListener(listener4);
+        radiobutton14.addActionListener(listener4);
+
 
         // 默认实验者名
         jtext1.setText(userName);

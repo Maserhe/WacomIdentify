@@ -1,5 +1,4 @@
 import com.csvreader.CsvWriter;
-import org.w3c.dom.css.Rect;
 
 import javax.swing.*;
 import java.awt.*;

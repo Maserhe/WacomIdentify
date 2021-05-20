@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-
 import static java.lang.StrictMath.pow;
-import static java.lang.StrictMath.sqrt;
 
 /**
  * @author Maserhe
